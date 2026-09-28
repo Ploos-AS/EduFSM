@@ -1,0 +1,9 @@
+# DFA: binary strings ending in 1
+STATE ends0
+STATE ends1
+INITIAL ends0
+ACCEPT ends1
+ends0 + 0 -> ends0
+ends0 + 1 -> ends1
+ends1 + 0 -> ends0
+ends1 + 1 -> ends1
