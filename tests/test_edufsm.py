@@ -269,4 +269,25 @@ rejected + digit -> rejected
         self.assertTrue(accepts(("underscore","letter")))
         self.assertFalse(accepts(("digit","letter")))
 
+
+    def test_m7_systemverilog_generator(self):
+        from edufsm.hdl import systemverilog, systemverilog_testbench
+        m=parse("""STATE idle
+STATE running
+INITIAL idle
+idle + start -> running
+running + stop -> idle
+""")
+        sv=systemverilog(m,"controller")
+        self.assertIn("module controller (",sv)
+        self.assertIn("always_ff @(posedge clk)",sv)
+        self.assertIn("always_comb begin",sv)
+        self.assertIn("if (reset) current_state <= STATE_IDLE;",sv)
+        self.assertIn("EVENT_START: next_state = STATE_RUNNING;",sv)
+        self.assertIn("default: next_state = STATE_IDLE;",sv)
+        tb=systemverilog_testbench(m,"controller")
+        self.assertIn("module controller_tb;",tb)
+        self.assertIn("controller dut",tb)
+        self.assertIn("$finish;",tb)
+
 if __name__ == "__main__": unittest.main()
