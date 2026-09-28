@@ -41,14 +41,16 @@ Simple lexical examples continue in M6 together with parsers and lexer examples.
 
 Qualification: `docs/M3-QUALIFICATION.md`
 
-## M4 — Sequential digital logic
+## M4 — Sequential digital logic — PASS
 
-- clocks and reset
-- flip-flops and state registers
-- next-state logic
-- state encoding
-- Boolean derivation
-- links to EduBoolean
+- [x] clocks and reset
+- [x] flip-flops and state registers
+- [x] next-state logic
+- [x] state encoding
+- [x] Boolean derivation
+- [x] links to EduBoolean
+
+Qualification: `docs/M4-QUALIFICATION.md`
 
 ## M5 — FSMs in software
 
