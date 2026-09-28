@@ -158,4 +158,22 @@ on + toggle -> off
         menc=binary_encoding(moore.machine)
         self.assertEqual(moore_output_table(moore,menc),(("0","dark"),("1","light")))
 
+
+    def test_software_generators(self):
+        from edufsm.software import python_match, python_table, c_switch
+        m=parse("""STATE idle
+STATE run
+INITIAL idle
+idle + start -> run
+run + stop -> idle
+""")
+        explicit=python_match(m)
+        self.assertIn("class State(Enum):",explicit)
+        self.assertIn('case (State.IDLE, "start"):',explicit)
+        tabled=python_table(m)
+        self.assertIn('("idle", "start"): "run"',tabled)
+        csrc=c_switch(m)
+        self.assertIn("typedef enum {",csrc)
+        self.assertIn("case EVENT_START: *state = STATE_RUN; return true;",csrc)
+
 if __name__ == "__main__": unittest.main()
