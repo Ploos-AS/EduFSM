@@ -1,6 +1,6 @@
 import argparse
 from pathlib import Path
-from .parser import parse
+from .parser import parse, parse_moore, parse_mealy
 from .render import table, dot
 from .nfa import parse_nfa, to_dfa
 
@@ -14,6 +14,8 @@ def main(argv=None) -> int:
     check=sub.add_parser("check",help="analyze DFA completeness"); check.add_argument("file")
     nfa=sub.add_parser("nfa-accept",help="test a string with an NFA"); nfa.add_argument("file"); nfa.add_argument("input",nargs="?",default="")
     conv=sub.add_parser("nfa-to-dfa",help="convert an NFA to DFA and emit DOT"); conv.add_argument("file")
+    mr=sub.add_parser("moore-run",help="simulate a Moore machine"); mr.add_argument("file"); mr.add_argument("events",nargs="*")
+    me=sub.add_parser("mealy-run",help="simulate a Mealy machine"); me.add_argument("file"); me.add_argument("events",nargs="*")
     args=ap.parse_args(argv)
     text=Path(args.file).read_text(encoding="utf-8")
     if args.command=="nfa-accept":
@@ -21,6 +23,20 @@ def main(argv=None) -> int:
         print("ACCEPT" if accepted else "REJECT"); return 0 if accepted else 1
     if args.command=="nfa-to-dfa":
         print(dot(to_dfa(parse_nfa(text))),end=""); return 0
+    if args.command=="moore-run":
+        machine=parse_moore(text); state=machine.machine.initial
+        print(f"Initial state: {state} | output: {machine.output(state)}")
+        for number,event in enumerate(args.events,1):
+            new,output=machine.step(state,event)
+            print(f"[{number:03}] {event}: {state} -> {new} | output: {output}"); state=new
+        print(f"Final state: {state} | output: {machine.output(state)}"); return 0
+    if args.command=="mealy-run":
+        machine=parse_mealy(text); state=machine.initial
+        print(f"Initial state: {state}")
+        for number,event in enumerate(args.events,1):
+            new,output=machine.step(state,event)
+            print(f"[{number:03}] {event}: {state} -> {new} | output: {output}"); state=new
+        print(f"Final state: {state}"); return 0
     machine=parse(text)
     if args.command=="table": print(table(machine),end=""); return 0
     if args.command=="graph": print(dot(machine),end=""); return 0
