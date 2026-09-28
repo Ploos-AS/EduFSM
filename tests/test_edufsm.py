@@ -92,4 +92,12 @@ unlocked + push -> locked / close
         self.assertEqual(m.step("locked","coin"),("unlocked","open"))
         self.assertEqual(m.step("unlocked","push"),("locked","close"))
 
+    def test_moore_and_mealy_dot_semantics(self):
+        from edufsm.parser import parse_moore, parse_mealy
+        from edufsm.render import moore_dot, mealy_dot
+        moore=parse_moore("STATE a\nSTATE b\nOUTPUT a off\nOUTPUT b on\na + go -> b\n")
+        self.assertIn('label="a / off"',moore_dot(moore))
+        mealy=parse_mealy("STATE a\nSTATE b\na + go -> b / pulse\n")
+        self.assertIn('label="go / pulse"',mealy_dot(mealy))
+
 if __name__ == "__main__": unittest.main()
