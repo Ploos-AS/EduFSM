@@ -5,11 +5,22 @@ def parse(text: str) -> Machine:
     for number, raw in enumerate(text.splitlines(), 1):
         line=raw.split("#",1)[0].strip()
         if not line: continue
-        if line.startswith("STATE "): states.append(line[6:].strip())
-        elif line.startswith("INITIAL "): initial=line[8:].strip()
+        lower=line.lower()
+        if lower.startswith("machine "):
+            continue  # optional human-readable machine name from M0
+        if lower.startswith("state "):
+            state=line.split(None,1)[1].strip()
+            if state not in states: states.append(state)
+        elif lower.startswith("initial "):
+            initial=line.split(None,1)[1].strip()
+        elif lower.startswith("transition "):
+            parts=line.split()
+            if len(parts)!=4: raise ValueError(f"line {number}: transition needs source event target")
+            _,source,event,target=parts; transitions.append(Transition(source,event,target))
         elif "->" in line and "+" in line:
-            left,target=(p.strip() for p in line.split("->",1)); source,event=(p.strip() for p in left.split("+",1)); transitions.append(Transition(source,event,target))
-        else: raise ValueError(f"line {number}: cannot parse {raw!r}")
+            left,target=(x.strip() for x in line.split("->",1)); source,event=(x.strip() for x in left.split("+",1)); transitions.append(Transition(source,event,target))
+        else:
+            raise ValueError(f"line {number}: cannot parse {raw!r}")
     if not states: raise ValueError("machine has no states")
     initial=initial or states[0]; known=set(states)
     if initial not in known: raise ValueError(f"unknown initial state {initial!r}")
