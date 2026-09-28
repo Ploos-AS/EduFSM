@@ -3,6 +3,7 @@ from pathlib import Path
 from .parser import parse, parse_moore, parse_mealy
 from .render import table, dot, moore_dot, mealy_dot
 from .nfa import parse_nfa, to_dfa
+from .digital import binary_encoding, one_hot_encoding, transition_truth_table
 
 def main(argv=None) -> int:
     ap=argparse.ArgumentParser(prog="edufsm",description="Educational finite-state-machine toolkit")
@@ -18,6 +19,8 @@ def main(argv=None) -> int:
     me=sub.add_parser("mealy-run",help="simulate a Mealy machine"); me.add_argument("file"); me.add_argument("events",nargs="*")
     mg=sub.add_parser("moore-graph",help="emit Graphviz DOT for a Moore machine"); mg.add_argument("file")
     meg=sub.add_parser("mealy-graph",help="emit Graphviz DOT for a Mealy machine"); meg.add_argument("file")
+    enc=sub.add_parser("encode",help="show digital state encoding"); enc.add_argument("file"); enc.add_argument("--style",choices=("binary","one-hot"),default="binary")
+    truth=sub.add_parser("truth-table",help="show encoded transition truth table"); truth.add_argument("file"); truth.add_argument("--style",choices=("binary","one-hot"),default="binary")
     args=ap.parse_args(argv)
     text=Path(args.file).read_text(encoding="utf-8")
     if args.command=="nfa-accept":
@@ -25,6 +28,18 @@ def main(argv=None) -> int:
         print("ACCEPT" if accepted else "REJECT"); return 0 if accepted else 1
     if args.command=="nfa-to-dfa":
         print(dot(to_dfa(parse_nfa(text))),end=""); return 0
+    if args.command in ("encode","truth-table"):
+        machine=parse(text)
+        encoding=binary_encoding(machine) if args.style=="binary" else one_hot_encoding(machine)
+        if args.command=="encode":
+            print(f"Encoding: {args.style} ({encoding.bits} bit(s))")
+            for state,code in encoding.codes: print(f"{state}: {code}")
+            return 0
+        print("| Present state | Input | Next state |")
+        print("|---|---|---|")
+        for present,event,nxt in transition_truth_table(machine,encoding):
+            print(f"| {present} | {event} | {nxt} |")
+        return 0
     if args.command=="moore-graph":
         print(moore_dot(parse_moore(text)),end=""); return 0
     if args.command=="mealy-graph":
