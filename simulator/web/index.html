@@ -17,15 +17,25 @@ locked + coin -> unlocked
 unlocked + push -> locked</textarea>
 <p><button id="load">Parse / Reset</button> <span id="error" class="error"></span></p>
 <section><h2>Current state</h2><div id="state" class="state"></div><div id="events"></div></section>
-<section><h2>Transition history</h2><pre id="history"></pre></section>
+<section><h2>Transition table</h2><div id="table"></div></section>
+<section><h2>Transition history</h2><pre id="history"></pre>
+<button id="exportTrace">Export trace</button>
+<button id="importTrace">Import / replay trace</button>
+<textarea id="trace" placeholder="edufsm-trace-v1 JSON"></textarea>
+</section>
 <section><h2>Analysis</h2><pre id="analysis"></pre></section>
 <script type="module">
-import {parseFSM,nextState,outgoingEvents,reachableStates} from "./core.js";
+import {parseFSM,nextState,outgoingEvents,reachableStates,transitionTable,traceObject,replayTrace} from "./core.js";
 let machine,state,history=[];
 const q=id=>document.getElementById(id);
 function render(){
  q("state").textContent=state||"—";
  q("history").textContent=history.map((x,i)=>`${i+1}. ${x.source} + ${x.event} -> ${x.target}`).join("\n")||"(empty)";
+ const table=document.createElement("table");
+ table.innerHTML="<thead><tr><th>State</th><th>Event</th><th>Next state</th></tr></thead>";
+ const tbody=document.createElement("tbody");
+ for(const t of transitionTable(machine)){const tr=document.createElement("tr");for(const v of [t.source,t.event,t.target]){const td=document.createElement("td");td.textContent=v;tr.appendChild(td);}tbody.appendChild(tr);}
+ table.appendChild(tbody);q("table").replaceChildren(table);
  q("events").replaceChildren(...outgoingEvents(machine,state).map(event=>{
    const b=document.createElement("button"); b.textContent=event;
    b.onclick=()=>{const source=state;state=nextState(machine,state,event);history.push({source,event,target:state});render();}; return b;
@@ -37,6 +47,9 @@ function load(){
  try{machine=parseFSM(q("source").value);state=machine.initial;history=[];q("error").textContent="";render();}
  catch(e){q("error").textContent=e.message;}
 }
-q("load").onclick=load;load();
+q("load").onclick=load;
+q("exportTrace").onclick=()=>{try{q("trace").value=JSON.stringify(traceObject(machine,history),null,2);}catch(e){q("error").textContent=e.message;}};
+q("importTrace").onclick=()=>{try{const trace=JSON.parse(q("trace").value);const final=replayTrace(machine,trace);history=trace.steps.map(s=>({...s}));state=final;q("error").textContent="";render();}catch(e){q("error").textContent=e.message;}};
+load();
 </script>
 </body></html>
