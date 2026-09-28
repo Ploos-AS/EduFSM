@@ -1,0 +1,16 @@
+# Simple request/response protocol controller
+STATE idle
+STATE receiving
+STATE processing
+STATE sending
+STATE error
+INITIAL idle
+
+idle + request_start -> receiving
+receiving + data -> receiving
+receiving + request_end -> processing
+processing + response_ready -> sending
+sending + sent -> idle
+receiving + malformed -> error
+processing + failure -> error
+error + reset -> idle
