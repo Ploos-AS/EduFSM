@@ -197,4 +197,50 @@ running + stop -> idle
         self.assertEqual(runtime.state,"idle")
         self.assertEqual(runtime.pending,())
 
+
+    def test_m6_command_parser_flow(self):
+        m=parse("""STATE idle
+STATE command
+STATE argument
+STATE ready
+INITIAL idle
+idle + letter -> command
+command + letter -> command
+command + space -> argument
+command + newline -> ready
+argument + letter -> argument
+argument + digit -> argument
+argument + newline -> ready
+ready + reset -> idle
+""")
+        state=m.initial
+        for event in ("letter","letter","space","letter","digit","newline"):
+            state=m.next_state(state,event)
+        self.assertEqual(state,"ready")
+        self.assertEqual(m.next_state(state,"reset"),"idle")
+
+    def test_m6_protocol_success_and_error_paths(self):
+        m=parse("""STATE idle
+STATE receiving
+STATE processing
+STATE sending
+STATE error
+INITIAL idle
+idle + request_start -> receiving
+receiving + data -> receiving
+receiving + request_end -> processing
+processing + response_ready -> sending
+sending + sent -> idle
+receiving + malformed -> error
+error + reset -> idle
+""")
+        state=m.initial
+        for event in ("request_start","data","request_end","response_ready","sent"):
+            state=m.next_state(state,event)
+        self.assertEqual(state,"idle")
+        state=m.next_state("idle","request_start")
+        state=m.next_state(state,"malformed")
+        self.assertEqual(state,"error")
+        self.assertEqual(m.next_state(state,"reset"),"idle")
+
 if __name__ == "__main__": unittest.main()
