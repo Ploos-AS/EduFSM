@@ -330,4 +330,34 @@ orphan + loop -> orphan
         self.assertEqual(nondeterministic_pairs(bad),(("a","x"),))
 
 
+    def test_m8_trace_json_roundtrip_and_replay(self):
+        from edufsm.trace import Trace, record_trace, replay_trace
+        m=parse("""STATE locked
+STATE unlocked
+INITIAL locked
+locked + coin -> unlocked
+unlocked + push -> locked
+""")
+        trace=record_trace(m,("coin","push","coin"))
+        self.assertEqual(trace.final,"unlocked")
+        restored=Trace.from_json(trace.to_json())
+        self.assertEqual(restored,trace)
+        self.assertEqual(replay_trace(m,restored),"unlocked")
+
+    def test_m8_replay_detects_model_drift(self):
+        from edufsm.trace import record_trace, replay_trace
+        from edufsm.model import Machine, Transition
+        original=Machine(
+            states=("a","b"), initial="a",
+            transitions=(Transition("a","go","b"),),
+        )
+        changed=Machine(
+            states=("a","b"), initial="a",
+            transitions=(Transition("a","go","a"),),
+        )
+        trace=record_trace(original,("go",))
+        with self.assertRaisesRegex(ValueError,"expected target"):
+            replay_trace(changed,trace)
+
+
 if __name__ == "__main__": unittest.main()
