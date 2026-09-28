@@ -71,3 +71,21 @@ def next_state_equations(machine: Machine, encoding: StateEncoding) -> tuple[tup
         for i,bit in enumerate(nxt):
             if bit=="1": terms[i].append(f"({term})")
     return tuple((f"D{i}"," | ".join(bits) if bits else "0") for i,bits in enumerate(terms))
+
+
+def reset_value(machine: Machine, encoding: StateEncoding) -> str:
+    """Return the encoded value loaded into the state register on reset."""
+    return encoding.code(machine.initial)
+
+def moore_output_table(machine, encoding: StateEncoding) -> tuple[tuple[str, str], ...]:
+    """Return encoded-state/output rows for a Moore machine."""
+    return tuple((encoding.code(state),machine.output(state)) for state in machine.machine.states)
+
+def clocked_step(machine: Machine, encoding: StateEncoding, state_bits: str, event: str, reset: bool=False) -> str:
+    """Model one active clock edge of a synchronous state register."""
+    if reset:
+        return reset_value(machine,encoding)
+    reverse={code:state for state,code in encoding.codes}
+    if state_bits not in reverse:
+        raise ValueError(f"invalid encoded state {state_bits!r}")
+    return encoding.code(machine.next_state(reverse[state_bits],event))
