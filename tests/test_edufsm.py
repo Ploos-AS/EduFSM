@@ -243,4 +243,30 @@ error + reset -> idle
         self.assertEqual(state,"error")
         self.assertEqual(m.next_state(state,"reset"),"idle")
 
+
+    def test_m6_lexer_identifier_classes(self):
+        m=parse("""STATE start
+STATE identifier
+STATE rejected
+INITIAL start
+ACCEPT identifier
+start + letter -> identifier
+start + underscore -> identifier
+start + digit -> rejected
+identifier + letter -> identifier
+identifier + underscore -> identifier
+identifier + digit -> identifier
+rejected + letter -> rejected
+rejected + underscore -> rejected
+rejected + digit -> rejected
+""")
+        def accepts(events):
+            state=m.initial
+            for event in events:
+                state=m.next_state(state,event)
+            return state in m.accepting
+        self.assertTrue(accepts(("letter","digit","letter")))
+        self.assertTrue(accepts(("underscore","letter")))
+        self.assertFalse(accepts(("digit","letter")))
+
 if __name__ == "__main__": unittest.main()
