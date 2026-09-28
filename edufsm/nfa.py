@@ -46,7 +46,7 @@ def parse_nfa(text: str) -> NFA:
             if state not in states: states.append(state)
             continue
         if keyword=="initial": initial=line.split(None,1)[1].strip(); continue
-        if keyword=="accept": accepting.extend(line.split()[1:]); continue
+        if keyword=="accept": accepting.extend(line.split(None,1)[1].split()); continue
         if keyword=="transition":
             parts=line.split()
             if len(parts)!=4: raise ValueError(f"line {number}: transition needs source event target")
