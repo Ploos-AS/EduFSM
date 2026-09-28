@@ -29,3 +29,5 @@ jobs:
       - run: edufsm mealy-run examples/mealy-turnstile.fsm coin push
       - run: edufsm moore-run examples/moore-turnstile.fsm coin coin push push
       - run: edufsm mealy-run examples/mealy-turnstile.fsm coin coin push push
+      - run: edufsm moore-graph examples/moore-turnstile.fsm
+      - run: edufsm mealy-graph examples/mealy-turnstile.fsm
