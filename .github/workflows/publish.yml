@@ -21,6 +21,14 @@ jobs:
           test -s build/diagrams/turnstile.png
           test -s build/diagrams/turnstile.svg
           test -s build/diagrams/dfa-ends-in-1.png
+          test -s build/exercises-no.md
+          test -s build/exercises-en.md
+          test -s build/site/no/exercises.html
+          test -s build/site/en/exercises.html
+          test -s build/edufsm-exercises-no.epub
+          test -s build/edufsm-exercises-en.epub
+          test -s build/edufsm-exercises-no.pdf
+          test -s build/edufsm-exercises-en.pdf
           test -s build/site/no/index.html
           test -s build/site/en/index.html
           test -s build/edufsm-no.epub
