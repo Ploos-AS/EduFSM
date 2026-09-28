@@ -10,9 +10,17 @@ def main(argv=None) -> int:
     acc=sub.add_parser("accept",help="test a string with a DFA"); acc.add_argument("file"); acc.add_argument("input",nargs="?",default="")
     tab=sub.add_parser("table",help="emit a Markdown transition table"); tab.add_argument("file")
     graph=sub.add_parser("graph",help="emit Graphviz DOT"); graph.add_argument("file")
+    check=sub.add_parser("check",help="analyze DFA completeness"); check.add_argument("file")
     args=ap.parse_args(argv); machine=parse(Path(args.file).read_text(encoding="utf-8"))
     if args.command=="table": print(table(machine),end=""); return 0
     if args.command=="graph": print(dot(machine),end=""); return 0
+    if args.command=="check":
+        print("Alphabet:", " ".join(machine.alphabet) or "(empty)")
+        missing=machine.missing_transitions()
+        if not missing: print("DFA: complete"); return 0
+        print("DFA: incomplete")
+        for state,symbol in missing: print(f"missing: {state} + {symbol}")
+        return 1
     if args.command=="accept":
         try: accepted=machine.accepts(args.input)
         except ValueError as exc: print(f"ERROR: {exc}"); return 2
