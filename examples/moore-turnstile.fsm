@@ -1,0 +1,10 @@
+# Moore turnstile: output describes the stable state
+STATE locked
+STATE unlocked
+INITIAL locked
+OUTPUT locked closed
+OUTPUT unlocked open
+locked + coin -> unlocked
+locked + push -> locked
+unlocked + coin -> unlocked
+unlocked + push -> locked
