@@ -89,11 +89,13 @@ Qualification: `docs/M7-QUALIFICATION.md`
 
 Qualification: `docs/M8-QUALIFICATION.md`
 
-## M9 — Publishing and interactive course
+## M9 — Publishing and interactive course — PASS
 
-- HTML site
-- EPUB
-- Kindle-friendly output
-- PDF
-- interactive simulator integration
-- generated diagrams and exercises
+- [x] HTML site
+- [x] EPUB
+- [x] Kindle-friendly output
+- [x] PDF
+- [x] interactive simulator integration
+- [x] generated diagrams and exercises
+
+Qualification: `docs/M9-QUALIFICATION.md`
