@@ -75,3 +75,20 @@ export function replayTrace(machine, trace) {
 export function transitionTable(machine) {
   return machine.transitions.map(t => ({source:t.source,event:t.event,target:t.target}));
 }
+
+
+export function diagramLayout(machine) {
+  const n=Math.max(machine.states.length,1);
+  const cx=300, cy=210, radius=Math.min(150,45*n);
+  const nodes=machine.states.map((state,i)=>{
+    const angle=-Math.PI/2 + 2*Math.PI*i/n;
+    return {state,x:cx+radius*Math.cos(angle),y:cy+radius*Math.sin(angle)};
+  });
+  const positions=Object.fromEntries(nodes.map(n=>[n.state,n]));
+  const edges=machine.transitions.map(t=>({
+    ...t,
+    x1:positions[t.source].x, y1:positions[t.source].y,
+    x2:positions[t.target].x, y2:positions[t.target].y
+  }));
+  return {width:600,height:420,nodes,edges};
+}
