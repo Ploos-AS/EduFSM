@@ -40,18 +40,19 @@ def parse_nfa(text: str) -> NFA:
         if not line: continue
         lower=line.lower()
         if lower.startswith("nfa ") or lower.startswith("machine "): continue
-        elif lower.startswith("state "):
+        if lower.startswith("state "):
             state=line.split(None,1)[1].strip()
             if state not in states: states.append(state)
-        elif lower.startswith("initial "): initial=line.split(None,1)[1].strip()
-        elif lower.startswith("accept "): accepting.extend(line.split()[1:])
-        elif lower.startswith("transition "):
+            continue
+        if lower.startswith("initial "): initial=line.split(None,1)[1].strip(); continue
+        if lower.startswith("accept "): accepting.extend(line.split()[1:]); continue
+        if lower.startswith("transition "):
             parts=line.split()
             if len(parts)!=4: raise ValueError(f"line {number}: transition needs source event target")
-            _,source,event,target=parts; transitions.append(Transition(source,event,target))
-        elif "->" in line and "+" in line:
-            left,target=(x.strip() for x in line.split("->",1)); source,event=(x.strip() for x in left.split("+",1)); transitions.append(Transition(source,event,target))
-        else: raise ValueError(f"line {number}: cannot parse {raw!r}")
+            _,source,event,target=parts; transitions.append(Transition(source,event,target)); continue
+        if "->" in line and "+" in line:
+            left,target=(x.strip() for x in line.split("->",1)); source,event=(x.strip() for x in left.split("+",1)); transitions.append(Transition(source,event,target)); continue
+        raise ValueError(f"line {number}: cannot parse {raw!r}")
     if not states: raise ValueError("NFA has no states")
     initial=initial or states[0]; known=set(states)
     if initial not in known: raise ValueError(f"unknown initial state {initial!r}")
