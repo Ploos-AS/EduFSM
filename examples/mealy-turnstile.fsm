@@ -1,0 +1,8 @@
+# Mealy turnstile
+STATE locked
+STATE unlocked
+INITIAL locked
+locked + coin -> unlocked / open
+locked + push -> locked / alarm
+unlocked + coin -> unlocked / thanks
+unlocked + push -> locked / close
