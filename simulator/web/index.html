@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>EduFSM Simulator</title>
+<style>
+body{font-family:system-ui,sans-serif;max-width:1000px;margin:auto;padding:1rem;line-height:1.5}textarea{width:100%;min-height:15rem;font-family:monospace}button{margin:.25rem;padding:.5rem}.state{font-size:1.5rem;font-weight:700}pre{background:#f4f4f4;padding:1rem;overflow:auto}.error{color:#a00}
+</style>
+</head>
+<body>
+<h1>EduFSM Simulator</h1>
+<p>Deterministic browser frontend for EduFSM.</p>
+<textarea id="source">STATE locked
+STATE unlocked
+INITIAL locked
+locked + coin -> unlocked
+unlocked + push -> locked</textarea>
+<p><button id="load">Parse / Reset</button> <span id="error" class="error"></span></p>
+<section><h2>Current state</h2><div id="state" class="state"></div><div id="events"></div></section>
+<section><h2>Transition history</h2><pre id="history"></pre></section>
+<section><h2>Analysis</h2><pre id="analysis"></pre></section>
+<script type="module">
+import {parseFSM,nextState,outgoingEvents,reachableStates} from "./core.js";
+let machine,state,history=[];
+const q=id=>document.getElementById(id);
+function render(){
+ q("state").textContent=state||"—";
+ q("history").textContent=history.map((x,i)=>`${i+1}. ${x.source} + ${x.event} -> ${x.target}`).join("\n")||"(empty)";
+ q("events").replaceChildren(...outgoingEvents(machine,state).map(event=>{
+   const b=document.createElement("button"); b.textContent=event;
+   b.onclick=()=>{const source=state;state=nextState(machine,state,event);history.push({source,event,target:state});render();}; return b;
+ }));
+ const reachable=reachableStates(machine), unreachable=machine.states.filter(s=>!reachable.includes(s));
+ q("analysis").textContent=`Reachable: ${reachable.join(", ")||"(none)"}\nUnreachable: ${unreachable.join(", ")||"(none)"}`;
+}
+function load(){
+ try{machine=parseFSM(q("source").value);state=machine.initial;history=[];q("error").textContent="";render();}
+ catch(e){q("error").textContent=e.message;}
+}
+q("load").onclick=load;load();
+</script>
+</body></html>
