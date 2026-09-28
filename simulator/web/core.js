@@ -13,8 +13,10 @@ export function parseFSM(text) {
     if ((m = line.match(/^STATE\s+(.+)$/i))) { states.push(m[1].trim()); continue; }
     if ((m = line.match(/^INITIAL\s+(.+)$/i))) { initial = m[1].trim(); continue; }
     if ((m = line.match(/^ACCEPT\s+(.+)$/i))) { accepting.push(m[1].trim()); continue; }
-    if ((m = line.match(/^transition\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)$/i))) {
-      transitions.push({source:m[1], event:m[2], target:m[3]});
+    if (line.toLowerCase().startsWith("transition ")) {
+      const parts = line.split(/\\s+/);
+      if (parts.length !== 4) throw new Error("Invalid transition line: " + line);
+      transitions.push({source:parts[1], event:parts[2], target:parts[3]});
       continue;
     }
     if ((m = line.match(/^(.+?)\s*\+\s*(.+?)\s*->\s*(.+)$/))) {
