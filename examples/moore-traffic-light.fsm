@@ -1,0 +1,8 @@
+# Moore traffic light
+STATE red
+STATE green
+INITIAL red
+OUTPUT red stop
+OUTPUT green go
+red + timer -> green
+green + timer -> red
