@@ -59,3 +59,27 @@ def parse_nfa(text: str) -> NFA:
     for t in transitions:
         if t.source not in known or t.target not in known: raise ValueError(f"transition references unknown state: {t}")
     return NFA(tuple(states),initial,tuple(transitions),tuple(dict.fromkeys(accepting)))
+
+
+def to_dfa(nfa: NFA):
+    """Convert an NFA to an equivalent DFA using subset construction."""
+    from .model import Machine
+
+    start=nfa.epsilon_closure({nfa.initial})
+    pending=[start]; discovered=[start]; edges=[]
+    while pending:
+        current=pending.pop(0)
+        for symbol in nfa.alphabet:
+            target=nfa.step(current,symbol)
+            if target not in discovered:
+                discovered.append(target); pending.append(target)
+            edges.append((current,symbol,target))
+
+    def name(states):
+        if not states: return "{}"
+        return "{" + ",".join(state for state in nfa.states if state in states) + "}"
+
+    states=tuple(name(s) for s in discovered)
+    transitions=tuple(Transition(name(src),symbol,name(dst)) for src,symbol,dst in edges)
+    accepting=tuple(name(s) for s in discovered if set(s).intersection(nfa.accepting))
+    return Machine(states,name(start),transitions,accepting)
