@@ -7,8 +7,8 @@ PCF := upduino_v31.pcf
 
 generate:
 	mkdir -p $(BUILD)
-	edufsm hdl ../../examples/turnstile.fsm --target systemverilog --module $(MODULE) > $(BUILD)/$(MODULE).sv
-	edufsm hdl ../../examples/turnstile.fsm --target testbench --module $(MODULE) > $(BUILD)/$(MODULE)_tb.sv
+	PYTHONPATH=../.. $(PYTHON) -m edufsm.cli hdl ../../examples/turnstile.fsm --target systemverilog --module $(MODULE) > $(BUILD)/$(MODULE).sv
+	PYTHONPATH=../.. $(PYTHON) -m edufsm.cli hdl ../../examples/turnstile.fsm --target testbench --module $(MODULE) > $(BUILD)/$(MODULE)_tb.sv
 
 test: generate
 	iverilog -g2012 -s $(MODULE)_tb -o $(BUILD)/$(MODULE).vvp $(BUILD)/$(MODULE).sv $(BUILD)/$(MODULE)_tb.sv
