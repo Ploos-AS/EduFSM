@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from .parser import parse
 from .render import table, dot
-from .nfa import parse_nfa
+from .nfa import parse_nfa, to_dfa
 
 def main(argv=None) -> int:
     ap=argparse.ArgumentParser(prog="edufsm",description="Educational finite-state-machine toolkit")
@@ -13,11 +13,14 @@ def main(argv=None) -> int:
     graph=sub.add_parser("graph",help="emit Graphviz DOT"); graph.add_argument("file")
     check=sub.add_parser("check",help="analyze DFA completeness"); check.add_argument("file")
     nfa=sub.add_parser("nfa-accept",help="test a string with an NFA"); nfa.add_argument("file"); nfa.add_argument("input",nargs="?",default="")
+    conv=sub.add_parser("nfa-to-dfa",help="convert an NFA to DFA and emit DOT"); conv.add_argument("file")
     args=ap.parse_args(argv)
     text=Path(args.file).read_text(encoding="utf-8")
     if args.command=="nfa-accept":
         machine=parse_nfa(text); accepted=machine.accepts(args.input)
         print("ACCEPT" if accepted else "REJECT"); return 0 if accepted else 1
+    if args.command=="nfa-to-dfa":
+        print(dot(to_dfa(parse_nfa(text))),end=""); return 0
     machine=parse(text)
     if args.command=="table": print(table(machine),end=""); return 0
     if args.command=="graph": print(dot(machine),end=""); return 0
