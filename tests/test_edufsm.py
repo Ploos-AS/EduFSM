@@ -39,4 +39,14 @@ class EduFSMTests(unittest.TestCase):
         self.assertFalse(incomplete.is_complete)
         self.assertEqual(incomplete.missing_transitions(), (("a","1"),("b","0")))
 
+    def test_nfa_nondeterminism_and_epsilon(self):
+        from edufsm.nfa import parse_nfa
+        nfa=parse_nfa("""STATE s\nSTATE a\nSTATE yes\nINITIAL s\nACCEPT yes\ns + 0 -> s\ns + 0 -> a\na + 1 -> yes\n""")
+        self.assertTrue(nfa.accepts("01"))
+        self.assertTrue(nfa.accepts("001"))
+        self.assertFalse(nfa.accepts("111"))
+        eps=parse_nfa("""STATE s\nSTATE a\nSTATE yes\nINITIAL s\nACCEPT yes\ns + epsilon -> a\na + 1 -> yes\n""")
+        self.assertEqual(eps.epsilon_closure({"s"}), frozenset({"s","a"}))
+        self.assertTrue(eps.accepts("1"))
+
 if __name__ == "__main__": unittest.main()
