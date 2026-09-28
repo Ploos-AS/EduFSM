@@ -64,6 +64,7 @@ class EduFSMTests(unittest.TestCase):
         from edufsm.nfa import parse_nfa
         nfa=parse_nfa("""NFA contains01\nSTATE start\nSTATE accept\nINITIAL start\nACCEPT accept\nstart + 1 -> accept\n""")
         self.assertEqual(nfa.accepting, ("accept",))
+        self.assertNotIn("ACCEPT", nfa.accepting)
         self.assertTrue(nfa.accepts("1"))
 
 if __name__ == "__main__": unittest.main()
