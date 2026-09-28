@@ -4,5 +4,5 @@
 set_io clk 20
 # Fixture inputs/outputs are assigned only to permit place-and-route qualification.
 set_io reset 12
-set_io event[0] 13
-set_io state[0] 14
+set_io event_i 13
+set_io state 14
