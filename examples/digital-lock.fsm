@@ -1,0 +1,10 @@
+# Educational combination lock
+STATE idle
+STATE one
+STATE two
+STATE open
+INITIAL idle
+idle + 1 -> one
+one + 2 -> two
+two + 3 -> open
+open + reset -> idle
