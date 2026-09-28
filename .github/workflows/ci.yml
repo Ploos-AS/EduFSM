@@ -40,3 +40,8 @@ jobs:
       - run: edufsm software examples/turnstile.fsm --target python-match
       - run: edufsm software examples/turnstile.fsm --target python-table
       - run: edufsm software examples/turnstile.fsm --target c-switch
+      - run: edufsm run examples/uart-receiver.fsm low clock byte_complete high
+      - run: edufsm run examples/command-parser.fsm letter letter space digit newline reset
+      - run: edufsm run examples/protocol-controller.fsm request_start data request_end response_ready sent
+      - run: edufsm run examples/protocol-controller.fsm request_start malformed reset
+      - run: edufsm run examples/lexer-identifier.fsm letter digit letter
