@@ -35,3 +35,5 @@ jobs:
       - run: edufsm encode examples/traffic-light.fsm --style one-hot
       - run: edufsm truth-table examples/traffic-light.fsm --style binary
       - run: edufsm truth-table examples/traffic-light.fsm --style one-hot
+      - run: edufsm equations examples/traffic-light.fsm --style binary
+      - run: edufsm equations examples/traffic-light.fsm --style one-hot
