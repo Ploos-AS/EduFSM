@@ -1,0 +1,8 @@
+# Three-state traffic light
+STATE red
+STATE green
+STATE yellow
+INITIAL red
+red + timer -> green
+green + timer -> yellow
+yellow + timer -> red
