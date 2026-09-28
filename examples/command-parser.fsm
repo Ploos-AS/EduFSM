@@ -1,0 +1,15 @@
+# Simple line-oriented command parser
+STATE idle
+STATE command
+STATE argument
+STATE ready
+INITIAL idle
+
+idle + letter -> command
+command + letter -> command
+command + space -> argument
+command + newline -> ready
+argument + letter -> argument
+argument + digit -> argument
+argument + newline -> ready
+ready + reset -> idle
