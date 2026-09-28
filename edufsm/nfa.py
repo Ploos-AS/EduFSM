@@ -38,6 +38,10 @@ def parse_nfa(text: str) -> NFA:
     for number,raw in enumerate(text.splitlines(),1):
         line=raw.split("#",1)[0].strip()
         if not line: continue
+        if "->" in line and "+" in line:
+            left,target=(x.strip() for x in line.split("->",1))
+            source,event=(x.strip() for x in left.split("+",1))
+            transitions.append(Transition(source,event,target)); continue
         parts=line.split()
         keyword=parts[0].lower()
         if keyword in ("nfa","machine"):
@@ -56,10 +60,6 @@ def parse_nfa(text: str) -> NFA:
         if keyword=="transition":
             if len(parts)!=4: raise ValueError(f"line {number}: transition needs source event target")
             transitions.append(Transition(parts[1],parts[2],parts[3])); continue
-        if "->" in line and "+" in line:
-            left,target=(x.strip() for x in line.split("->",1))
-            source,event=(x.strip() for x in left.split("+",1))
-            transitions.append(Transition(source,event,target)); continue
         raise ValueError(f"line {number}: cannot parse {raw!r}")
     if not states: raise ValueError("NFA has no states")
     initial=initial or states[0]; known=set(states)
