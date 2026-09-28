@@ -39,7 +39,9 @@ jobs:
               <p>Learn how computers make decisions over time.</p>
               <nav>
                 <a href="no/">Norsk</a>
+                <a href="no/exercises.html">Norske oppgaver</a>
                 <a href="en/">English</a>
+                <a href="en/exercises.html">English exercises</a>
                 <a href="simulator/">Interactive simulator</a>
               </nav>
             </main>
