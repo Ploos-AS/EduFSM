@@ -49,4 +49,15 @@ class EduFSMTests(unittest.TestCase):
         self.assertEqual(eps.epsilon_closure({"s"}), frozenset({"s","a"}))
         self.assertTrue(eps.accepts("1"))
 
+    def test_subset_construction_equivalence(self):
+        from itertools import product
+        from edufsm.nfa import parse_nfa, to_dfa
+        nfa=parse_nfa("""STATE s\nSTATE a\nSTATE yes\nINITIAL s\nACCEPT yes\ns + 0 -> s\ns + 0 -> a\ns + 1 -> s\na + 1 -> yes\nyes + 0 -> yes\nyes + 1 -> yes\n""")
+        dfa=to_dfa(nfa)
+        self.assertTrue(dfa.is_complete)
+        for length in range(6):
+            for symbols in product("01", repeat=length):
+                word="".join(symbols)
+                self.assertEqual(nfa.accepts(word), dfa.accepts(word), word)
+
 if __name__ == "__main__": unittest.main()
