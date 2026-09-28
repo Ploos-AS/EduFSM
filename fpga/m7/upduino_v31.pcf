@@ -1,0 +1,8 @@
+# EduFSM M7 synthesis fixture.
+# The generated FSM is qualified as FPGA logic; no physical board test is claimed.
+# UPduino v3.1 clock pin.
+set_io clk 20
+# Fixture inputs/outputs are assigned only to permit place-and-route qualification.
+set_io reset 12
+set_io event[0] 13
+set_io state[0] 14
