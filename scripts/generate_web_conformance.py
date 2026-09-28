@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 CASES = {
     "turnstile": ("examples/turnstile.fsm", ("coin", "push", "coin")),
     "traffic-light": ("examples/traffic-light.fsm", ("timer", "timer", "timer")),
-    "digital-lock": ("examples/digital-lock.fsm", ("digit",)),
+    "digital-lock": ("examples/digital-lock.fsm", ("1", "2", "3", "reset")),
 }
 
 out = {"format": "edufsm-web-conformance-v1", "cases": []}
