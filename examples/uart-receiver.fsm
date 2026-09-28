@@ -1,0 +1,10 @@
+# Conceptual UART receiver; deliberately simplified for teaching
+STATE idle
+STATE start
+STATE data
+STATE stop
+INITIAL idle
+idle + low -> start
+start + clock -> data
+data + byte_complete -> stop
+stop + high -> idle
