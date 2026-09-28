@@ -52,12 +52,14 @@ Qualification: `docs/M3-QUALIFICATION.md`
 
 Qualification: `docs/M4-QUALIFICATION.md`
 
-## M5 — FSMs in software
+## M5 — FSMs in software — PASS
 
-- enums and switch/match implementations
-- table-driven machines
-- event-driven systems
-- C and Python implementations
+- [x] enums and switch/match implementations
+- [x] table-driven machines
+- [x] event-driven systems
+- [x] C and Python implementations
+
+Qualification: `docs/M5-QUALIFICATION.md`
 
 ## M6 — Protocols and parsers
 
