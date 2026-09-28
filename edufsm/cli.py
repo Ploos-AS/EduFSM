@@ -5,6 +5,7 @@ from .render import table, dot, moore_dot, mealy_dot
 from .nfa import parse_nfa, to_dfa
 from .digital import binary_encoding, one_hot_encoding, transition_truth_table, input_codes, next_state_equations
 from .software import python_match, python_table, c_switch
+from .hdl import systemverilog, systemverilog_testbench
 
 def main(argv=None) -> int:
     ap=argparse.ArgumentParser(prog="edufsm",description="Educational finite-state-machine toolkit")
@@ -24,8 +25,13 @@ def main(argv=None) -> int:
     truth=sub.add_parser("truth-table",help="show encoded transition truth table"); truth.add_argument("file"); truth.add_argument("--style",choices=("binary","one-hot"),default="binary")
     eq=sub.add_parser("equations",help="derive canonical next-state Boolean equations"); eq.add_argument("file"); eq.add_argument("--style",choices=("binary","one-hot"),default="binary")
     sw=sub.add_parser("software",help="generate a software implementation"); sw.add_argument("file"); sw.add_argument("--target",choices=("python-match","python-table","c-switch"),default="python-match")
+    hd=sub.add_parser("hdl",help="generate a hardware implementation"); hd.add_argument("file"); hd.add_argument("--target",choices=("systemverilog","testbench"),default="systemverilog"); hd.add_argument("--module",default="edufsm_machine")
     args=ap.parse_args(argv)
     text=Path(args.file).read_text(encoding="utf-8")
+    if args.command=="hdl":
+        machine=parse(text)
+        generator=systemverilog if args.target=="systemverilog" else systemverilog_testbench
+        print(generator(machine,args.module),end=""); return 0
     if args.command=="software":
         machine=parse(text)
         generators={"python-match":python_match,"python-table":python_table,"c-switch":c_switch}
