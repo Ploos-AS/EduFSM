@@ -40,7 +40,7 @@ def parse_nfa(text: str) -> NFA:
         if not line: continue
         lower=line.lower()
         keyword=line.split(None,1)[0].lower()
-        if keyword in ("nfa","machine"): continue
+        if keyword in ("nfa","machine") and len(line.split()) == 2: continue
         if keyword=="state":
             state=line.split(None,1)[1].strip()
             if state not in states: states.append(state)
