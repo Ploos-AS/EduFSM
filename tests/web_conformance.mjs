@@ -4,6 +4,13 @@ import {parseFSM,nextState,reachableStates} from "../simulator/web/core.js";
 const data=JSON.parse(fs.readFileSync("simulator/web/conformance.json","utf8"));
 if(data.format!=="edufsm-web-conformance-v1") throw new Error("bad conformance format");
 
+const longSyntax=parseFSM(`machine whitespace
+STATE idle
+STATE done
+INITIAL idle
+transition   idle   go   done`);
+if(nextState(longSyntax,"idle","go")!=="done") throw new Error("long transition whitespace mismatch");
+
 for(const fixture of data.cases){
   const machine=parseFSM(fixture.source);
   if(machine.initial!==fixture.initial) throw new Error(fixture.name+": initial mismatch");
