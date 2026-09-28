@@ -61,12 +61,14 @@ Qualification: `docs/M4-QUALIFICATION.md`
 
 Qualification: `docs/M5-QUALIFICATION.md`
 
-## M6 — Protocols and parsers
+## M6 — Protocols and parsers — PASS
 
-- UART receiver
-- command parser
-- simple protocol controller
-- lexer examples
+- [x] UART receiver
+- [x] command parser
+- [x] simple protocol controller
+- [x] lexer examples
+
+Qualification: `docs/M6-QUALIFICATION.md`
 
 ## M7 — HDL and FPGA
 
