@@ -1,0 +1,17 @@
+# Simplified lexer recognizer for identifiers
+# Event classes are used instead of individual characters.
+STATE start
+STATE identifier
+STATE rejected
+INITIAL start
+ACCEPT identifier
+
+start + letter -> identifier
+start + underscore -> identifier
+start + digit -> rejected
+identifier + letter -> identifier
+identifier + underscore -> identifier
+identifier + digit -> identifier
+rejected + letter -> rejected
+rejected + underscore -> rejected
+rejected + digit -> rejected
