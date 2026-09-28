@@ -28,6 +28,12 @@ def combined_markdown(language: str) -> str:
     parts = [f"# {title}\n"]
     for chapter in chapters:
         parts.append(chapter.read_text(encoding="utf-8").strip())
+    heading = "Eksempeldiagrammer" if language == "no" else "Example diagrams"
+    intro = "Generert fra de samme .fsm-filene som simulatoren og testene bruker." if language == "no" else "Generated from the same .fsm files used by the simulator and tests."
+    diagrams = [f"# {heading}\n\n{intro}"]
+    for name in ("turnstile", "traffic-light", "digital-lock", "command-parser", "protocol-controller", "lexer-identifier", "uart-receiver", "dfa-ends-in-1"):
+        diagrams.append(f"## {name}\n\n![{name}](diagrams/{name}.png)")
+    parts.append("\n\n".join(diagrams))
     return "\n\n---\n\n".join(parts) + "\n"
 
 
