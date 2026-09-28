@@ -21,3 +21,4 @@ jobs:
       - run: edufsm accept examples/dfa-ends-in-1.fsm 101
       - run: edufsm table examples/dfa-ends-in-1.fsm
       - run: edufsm graph examples/dfa-ends-in-1.fsm
+      - run: edufsm check examples/dfa-ends-in-1.fsm
