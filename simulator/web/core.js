@@ -14,7 +14,7 @@ export function parseFSM(text) {
     if ((m = line.match(/^INITIAL\s+(.+)$/i))) { initial = m[1].trim(); continue; }
     if ((m = line.match(/^ACCEPT\s+(.+)$/i))) { accepting.push(m[1].trim()); continue; }
     if (line.toLowerCase().startsWith("transition ")) {
-      const parts = line.split(/\\s+/);
+      const parts = line.split(" ").filter(Boolean);
       if (parts.length !== 4) throw new Error("Invalid transition line: " + line);
       transitions.push({source:parts[1], event:parts[2], target:parts[3]});
       continue;
