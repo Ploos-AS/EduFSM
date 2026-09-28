@@ -32,4 +32,11 @@ class EduFSMTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             parse("STATE a\nACCEPT missing\n")
 
+    def test_dfa_completeness(self):
+        complete=parse("""STATE a\nSTATE b\na + 0 -> a\na + 1 -> b\nb + 0 -> a\nb + 1 -> b\n""")
+        self.assertTrue(complete.is_complete)
+        incomplete=parse("""STATE a\nSTATE b\na + 0 -> b\nb + 1 -> a\n""")
+        self.assertFalse(incomplete.is_complete)
+        self.assertEqual(incomplete.missing_transitions(), (("a","1"),("b","0")))
+
 if __name__ == "__main__": unittest.main()
