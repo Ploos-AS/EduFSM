@@ -134,4 +134,28 @@ b + go -> a
         self.assertIn("!Q0 & X0",equations["D0"])
         self.assertIn("Q0 & !X0",equations["D0"])
 
+    def test_clock_reset_and_moore_output_table(self):
+        from edufsm.digital import binary_encoding, reset_value, clocked_step, moore_output_table
+        from edufsm.parser import parse_moore
+        m=parse("""STATE idle
+STATE run
+INITIAL idle
+idle + start -> run
+run + stop -> idle
+""")
+        enc=binary_encoding(m)
+        self.assertEqual(reset_value(m,enc),"0")
+        self.assertEqual(clocked_step(m,enc,"0","start"),"1")
+        self.assertEqual(clocked_step(m,enc,"1","ignored",reset=True),"0")
+        moore=parse_moore("""STATE off
+STATE on
+INITIAL off
+OUTPUT off dark
+OUTPUT on light
+off + toggle -> on
+on + toggle -> off
+""")
+        menc=binary_encoding(moore.machine)
+        self.assertEqual(moore_output_table(moore,menc),(("0","dark"),("1","light")))
+
 if __name__ == "__main__": unittest.main()
