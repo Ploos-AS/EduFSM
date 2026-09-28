@@ -1,0 +1,13 @@
+# NFA accepting binary strings containing 01
+NFA contains01
+STATE start
+STATE saw0
+STATE accept
+INITIAL start
+ACCEPT accept
+start + 0 -> start
+start + 0 -> saw0
+start + 1 -> start
+saw0 + 1 -> accept
+accept + 0 -> accept
+accept + 1 -> accept
