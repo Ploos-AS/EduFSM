@@ -5,18 +5,11 @@ from .render import table, dot
 
 def main(argv=None) -> int:
     ap=argparse.ArgumentParser(prog="edufsm",description="Educational deterministic FSM toolkit")
-    sub=ap.add_subparsers(dest="command")
+    sub=ap.add_subparsers(dest="command",required=True)
     run=sub.add_parser("run",help="simulate a machine"); run.add_argument("file"); run.add_argument("events",nargs="*")
     tab=sub.add_parser("table",help="emit a Markdown transition table"); tab.add_argument("file")
     graph=sub.add_parser("graph",help="emit Graphviz DOT"); graph.add_argument("file")
-    # M1 compatibility: edufsm FILE EVENT...
-    args,extra=ap.parse_known_args(argv)
-    if args.command is None:
-        raw=list(argv or [])
-        if not raw:
-            ap.print_help(); return 2
-        args=run.parse_args(raw)
-        args.command="run"
+    args=ap.parse_args(argv)
     machine=parse(Path(args.file).read_text(encoding="utf-8"))
     if args.command=="table": print(table(machine),end=""); return 0
     if args.command=="graph": print(dot(machine),end=""); return 0
