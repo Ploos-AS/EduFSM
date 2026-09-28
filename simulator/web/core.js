@@ -9,6 +9,7 @@ export function parseFSM(text) {
     const line = raw.trim();
     if (!line || line.startsWith("#")) continue;
     let m;
+    if (/^machine\\s+.+$/i.test(line)) continue;
     if ((m = line.match(/^STATE\s+(.+)$/i))) { states.push(m[1].trim()); continue; }
     if ((m = line.match(/^INITIAL\s+(.+)$/i))) { initial = m[1].trim(); continue; }
     if ((m = line.match(/^ACCEPT\s+(.+)$/i))) { accepting.push(m[1].trim()); continue; }
