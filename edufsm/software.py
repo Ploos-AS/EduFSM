@@ -78,3 +78,36 @@ def c_switch(machine: Machine) -> str:
         lines += ["        default: return false;", "        }"]
     lines += ["    default: return false;", "    }", "}", "", f"state_t state = {state_names[machine.initial]};"]
     return "\n".join(lines)+"\n"
+
+
+class EventDrivenFSM:
+    """Small queue-driven runtime showing how FSMs fit event loops."""
+
+    def __init__(self, machine: Machine):
+        self.machine=machine
+        self.state=machine.initial
+        self._queue=[]
+
+    def post(self, event: str) -> None:
+        """Append an event without changing state immediately."""
+        self._queue.append(event)
+
+    @property
+    def pending(self) -> tuple[str, ...]:
+        return tuple(self._queue)
+
+    def dispatch_one(self) -> tuple[str, str, str]:
+        """Consume one queued event and execute its transition."""
+        if not self._queue:
+            raise ValueError("event queue is empty")
+        event=self._queue.pop(0)
+        source=self.state
+        self.state=self.machine.next_state(self.state,event)
+        return source,event,self.state
+
+    def dispatch_all(self) -> tuple[tuple[str, str, str], ...]:
+        """Drain the queue in FIFO order and return a deterministic trace."""
+        trace=[]
+        while self._queue:
+            trace.append(self.dispatch_one())
+        return tuple(trace)
