@@ -67,4 +67,29 @@ class EduFSMTests(unittest.TestCase):
         self.assertNotIn("ACCEPT", nfa.accepting)
         self.assertTrue(nfa.accepts("1"))
 
+
+    def test_moore_outputs_follow_state(self):
+        from edufsm.parser import parse_moore
+        m=parse_moore("""STATE red
+STATE green
+INITIAL red
+OUTPUT red stop
+OUTPUT green go
+red + timer -> green
+green + timer -> red
+""")
+        self.assertEqual(m.output("red"),"stop")
+        self.assertEqual(m.step("red","timer"),("green","go"))
+
+    def test_mealy_outputs_follow_transition(self):
+        from edufsm.parser import parse_mealy
+        m=parse_mealy("""STATE locked
+STATE unlocked
+INITIAL locked
+locked + coin -> unlocked / open
+unlocked + push -> locked / close
+""")
+        self.assertEqual(m.step("locked","coin"),("unlocked","open"))
+        self.assertEqual(m.step("unlocked","push"),("locked","close"))
+
 if __name__ == "__main__": unittest.main()
