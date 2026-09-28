@@ -24,3 +24,4 @@ jobs:
       - run: edufsm check examples/dfa-ends-in-1.fsm
       - run: edufsm nfa-accept examples/nfa-contains-01.fsm 11010
       - run: edufsm nfa-accept examples/nfa-epsilon.fsm 1
+      - run: edufsm nfa-to-dfa examples/nfa-contains-01.fsm
