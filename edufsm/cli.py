@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 from .parser import parse, parse_moore, parse_mealy
-from .render import table, dot
+from .render import table, dot, moore_dot, mealy_dot
 from .nfa import parse_nfa, to_dfa
 
 def main(argv=None) -> int:
@@ -16,6 +16,8 @@ def main(argv=None) -> int:
     conv=sub.add_parser("nfa-to-dfa",help="convert an NFA to DFA and emit DOT"); conv.add_argument("file")
     mr=sub.add_parser("moore-run",help="simulate a Moore machine"); mr.add_argument("file"); mr.add_argument("events",nargs="*")
     me=sub.add_parser("mealy-run",help="simulate a Mealy machine"); me.add_argument("file"); me.add_argument("events",nargs="*")
+    mg=sub.add_parser("moore-graph",help="emit Graphviz DOT for a Moore machine"); mg.add_argument("file")
+    meg=sub.add_parser("mealy-graph",help="emit Graphviz DOT for a Mealy machine"); meg.add_argument("file")
     args=ap.parse_args(argv)
     text=Path(args.file).read_text(encoding="utf-8")
     if args.command=="nfa-accept":
@@ -23,6 +25,10 @@ def main(argv=None) -> int:
         print("ACCEPT" if accepted else "REJECT"); return 0 if accepted else 1
     if args.command=="nfa-to-dfa":
         print(dot(to_dfa(parse_nfa(text))),end=""); return 0
+    if args.command=="moore-graph":
+        print(moore_dot(parse_moore(text)),end=""); return 0
+    if args.command=="mealy-graph":
+        print(mealy_dot(parse_mealy(text)),end=""); return 0
     if args.command=="moore-run":
         machine=parse_moore(text); state=machine.machine.initial
         print(f"Initial state: {state} | output: {machine.output(state)}")
