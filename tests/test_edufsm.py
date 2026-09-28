@@ -100,4 +100,22 @@ unlocked + push -> locked / close
         mealy=parse_mealy("STATE a\nSTATE b\na + go -> b / pulse\n")
         self.assertIn('label="go / pulse"',mealy_dot(mealy))
 
+    def test_binary_and_one_hot_state_encoding(self):
+        from edufsm.digital import binary_encoding, one_hot_encoding, transition_truth_table
+        m=parse("""STATE idle
+STATE run
+STATE done
+INITIAL idle
+idle + start -> run
+run + finish -> done
+done + reset -> idle
+""")
+        binary=binary_encoding(m)
+        self.assertEqual(binary.bits,2)
+        self.assertEqual(binary.codes,(("idle","00"),("run","01"),("done","10")))
+        onehot=one_hot_encoding(m)
+        self.assertEqual(onehot.bits,3)
+        self.assertEqual(onehot.codes,(("idle","100"),("run","010"),("done","001")))
+        self.assertEqual(transition_truth_table(m,binary)[0],("00","start","01"))
+
 if __name__ == "__main__": unittest.main()
