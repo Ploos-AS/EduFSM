@@ -23,6 +23,10 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y pandoc
       - name: Build HTML site
         run: make html
+      - name: Add interactive simulator
+        run: |
+          PYTHONPATH=. python3 scripts/generate_web_conformance.py
+          cp -r simulator/web build/site/simulator
       - name: Add language landing page
         run: |
           cat > build/site/index.html <<'EOF'
@@ -36,6 +40,7 @@ jobs:
               <nav>
                 <a href="no/">Norsk</a>
                 <a href="en/">English</a>
+                <a href="simulator/">Interactive simulator</a>
               </nav>
             </main>
           </body>
