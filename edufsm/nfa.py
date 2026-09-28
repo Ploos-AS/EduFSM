@@ -1,0 +1,61 @@
+from dataclasses import dataclass
+from .model import Transition
+
+EPSILON = "epsilon"
+
+@dataclass(frozen=True)
+class NFA:
+    states: tuple[str, ...]
+    initial: str
+    transitions: tuple[Transition, ...]
+    accepting: tuple[str, ...] = ()
+
+    @property
+    def alphabet(self) -> tuple[str, ...]:
+        return tuple(dict.fromkeys(t.event for t in self.transitions if t.event != EPSILON))
+
+    def epsilon_closure(self, states) -> frozenset[str]:
+        closure=set(states); pending=list(states)
+        while pending:
+            state=pending.pop()
+            for t in self.transitions:
+                if t.source==state and t.event==EPSILON and t.target not in closure:
+                    closure.add(t.target); pending.append(t.target)
+        return frozenset(closure)
+
+    def step(self, states, symbol: str) -> frozenset[str]:
+        active=self.epsilon_closure(states)
+        targets={t.target for t in self.transitions if t.source in active and t.event==symbol}
+        return self.epsilon_closure(targets)
+
+    def accepts(self, symbols) -> bool:
+        active=self.epsilon_closure({self.initial})
+        for symbol in symbols: active=self.step(active,symbol)
+        return bool(active.intersection(self.accepting))
+
+def parse_nfa(text: str) -> NFA:
+    states=[]; initial=None; accepting=[]; transitions=[]
+    for number,raw in enumerate(text.splitlines(),1):
+        line=raw.split("#",1)[0].strip()
+        if not line: continue
+        lower=line.lower()
+        if lower.startswith("nfa ") or lower.startswith("machine "): continue
+        if lower.startswith("state "):
+            state=line.split(None,1)[1].strip()
+            if state not in states: states.append(state)
+        elif lower.startswith("initial "): initial=line.split(None,1)[1].strip()
+        elif lower.startswith("accept "): accepting.extend(line.split()[1:])
+        elif lower.startswith("transition "):
+            parts=line.split()
+            if len(parts)!=4: raise ValueError(f"line {number}: transition needs source event target")
+            _,source,event,target=parts; transitions.append(Transition(source,event,target))
+        elif "->" in line and "+" in line:
+            left,target=(x.strip() for x in line.split("->",1)); source,event=(x.strip() for x in left.split("+",1)); transitions.append(Transition(source,event,target))
+        else: raise ValueError(f"line {number}: cannot parse {raw!r}")
+    if not states: raise ValueError("NFA has no states")
+    initial=initial or states[0]; known=set(states)
+    if initial not in known: raise ValueError(f"unknown initial state {initial!r}")
+    if set(accepting)-known: raise ValueError("unknown accepting state")
+    for t in transitions:
+        if t.source not in known or t.target not in known: raise ValueError(f"transition references unknown state: {t}")
+    return NFA(tuple(states),initial,tuple(transitions),tuple(dict.fromkeys(accepting)))
