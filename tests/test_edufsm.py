@@ -118,4 +118,20 @@ done + reset -> idle
         self.assertEqual(onehot.codes,(("idle","100"),("run","010"),("done","001")))
         self.assertEqual(transition_truth_table(m,binary)[0],("00","start","01"))
 
+    def test_next_state_boolean_equations(self):
+        from edufsm.digital import binary_encoding, input_codes, next_state_equations
+        m=parse("""STATE a
+STATE b
+INITIAL a
+a + stay -> a
+a + go -> b
+b + stay -> b
+b + go -> a
+""")
+        enc=binary_encoding(m)
+        self.assertEqual(input_codes(m),(("stay","0"),("go","1")))
+        equations=dict(next_state_equations(m,enc))
+        self.assertIn("!Q0 & X0",equations["D0"])
+        self.assertIn("Q0 & !X0",equations["D0"])
+
 if __name__ == "__main__": unittest.main()
