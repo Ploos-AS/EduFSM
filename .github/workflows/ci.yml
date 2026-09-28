@@ -27,3 +27,5 @@ jobs:
       - run: edufsm nfa-to-dfa examples/nfa-contains-01.fsm
       - run: edufsm moore-run examples/moore-traffic-light.fsm timer timer
       - run: edufsm mealy-run examples/mealy-turnstile.fsm coin push
+      - run: edufsm moore-run examples/moore-turnstile.fsm coin coin push push
+      - run: edufsm mealy-run examples/mealy-turnstile.fsm coin coin push push
