@@ -22,7 +22,7 @@ epub: sources
 	@for lang in $(LANGS); do $(PANDOC) $(BUILD)/edufsm-$lang.md --resource-path=$(BUILD) --toc --metadata title="EduFSM" --metadata lang=$lang -o $(BUILD)/edufsm-$$lang.epub; done
 
 kindle: sources
-	@for lang in $(LANGS); do $(PANDOC) $(BUILD)/edufsm-$$lang.md --toc --metadata title="EduFSM" --metadata lang=$$lang -o $(BUILD)/edufsm-$$lang-kindle.epub; done
+	@for lang in $(LANGS); do $(PANDOC) $(BUILD)/edufsm-$lang.md --resource-path=$(BUILD) --toc --metadata title="EduFSM" --metadata lang=$lang -o $(BUILD)/edufsm-$lang-kindle.epub; done
 
 pdf: sources
 	@for lang in $(LANGS); do $(PANDOC) $(BUILD)/edufsm-$lang.md --resource-path=$(BUILD) --toc --pdf-engine=xelatex --variable=geometry:margin=25mm --variable=mainfont="DejaVu Sans" --variable=monofont="DejaVu Sans Mono" -o $(BUILD)/edufsm-$$lang.pdf; done
