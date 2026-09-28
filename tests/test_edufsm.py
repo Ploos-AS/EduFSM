@@ -290,4 +290,44 @@ running + stop -> idle
         self.assertIn("controller dut",tb)
         self.assertIn("$finish;",tb)
 
+    def test_m8_reachability_dead_and_productivity(self):
+        from edufsm.analysis import reachable_states, unreachable_states, dead_end_states, productive_states, nonproductive_states
+        m=parse("""STATE start
+STATE live
+STATE dead
+STATE orphan
+INITIAL start
+ACCEPT live
+start + go -> live
+live + stay -> live
+orphan + loop -> orphan
+""")
+        self.assertEqual(reachable_states(m),("start","live"))
+        self.assertEqual(unreachable_states(m),("dead","orphan"))
+        self.assertEqual(dead_end_states(m),("dead",))
+        self.assertEqual(productive_states(m),("start","live"))
+        self.assertEqual(nonproductive_states(m),("dead","orphan"))
+
+    def test_m8_determinism_and_transition_coverage(self):
+        from edufsm.analysis import nondeterministic_pairs, transition_coverage
+        from edufsm.model import Machine, Transition
+        m=Machine(
+            states=("idle","run"),
+            initial="idle",
+            transitions=(
+                Transition("idle","start","run"),
+                Transition("run","stop","idle"),
+            ),
+        )
+        self.assertEqual(nondeterministic_pairs(m),())
+        self.assertEqual(transition_coverage(m,("start",)),(1,2,50.0))
+        self.assertEqual(transition_coverage(m,("start","stop")),(2,2,100.0))
+        bad=Machine(
+            states=("a","b"),
+            initial="a",
+            transitions=(Transition("a","x","a"),Transition("a","x","b")),
+        )
+        self.assertEqual(nondeterministic_pairs(bad),(("a","x"),))
+
+
 if __name__ == "__main__": unittest.main()
