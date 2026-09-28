@@ -38,28 +38,37 @@ def parse_nfa(text: str) -> NFA:
     for number,raw in enumerate(text.splitlines(),1):
         line=raw.split("#",1)[0].strip()
         if not line: continue
-        lower=line.lower()
-        keyword=line.split(None,1)[0].lower()
-        if keyword in ("nfa","machine") and len(line.split()) == 2: continue
-        if keyword=="state":
-            state=line.split(None,1)[1].strip()
-            if state not in states: states.append(state)
+        parts=line.split()
+        keyword=parts[0].lower()
+        if keyword in ("nfa","machine"):
+            if len(parts)!=2: raise ValueError(f"line {number}: {keyword} needs a name")
             continue
-        if keyword=="initial": initial=line.split(None,1)[1].strip(); continue
-        if keyword=="accept": accepting.extend(line.split(None,1)[1].split()); continue
+        if keyword=="state":
+            if len(parts)!=2: raise ValueError(f"line {number}: state needs a name")
+            if parts[1] not in states: states.append(parts[1])
+            continue
+        if keyword=="initial":
+            if len(parts)!=2: raise ValueError(f"line {number}: initial needs one state")
+            initial=parts[1]; continue
+        if keyword=="accept":
+            if len(parts)<2: raise ValueError(f"line {number}: accept needs at least one state")
+            accepting.extend(parts[1:]); continue
         if keyword=="transition":
-            parts=line.split()
             if len(parts)!=4: raise ValueError(f"line {number}: transition needs source event target")
-            _,source,event,target=parts; transitions.append(Transition(source,event,target)); continue
+            transitions.append(Transition(parts[1],parts[2],parts[3])); continue
         if "->" in line and "+" in line:
-            left,target=(x.strip() for x in line.split("->",1)); source,event=(x.strip() for x in left.split("+",1)); transitions.append(Transition(source,event,target)); continue
+            left,target=(x.strip() for x in line.split("->",1))
+            source,event=(x.strip() for x in left.split("+",1))
+            transitions.append(Transition(source,event,target)); continue
         raise ValueError(f"line {number}: cannot parse {raw!r}")
     if not states: raise ValueError("NFA has no states")
     initial=initial or states[0]; known=set(states)
     if initial not in known: raise ValueError(f"unknown initial state {initial!r}")
-    if set(accepting)-known: raise ValueError("unknown accepting state")
+    unknown_accepting=set(accepting)-known
+    if unknown_accepting: raise ValueError(f"unknown accepting state(s): {sorted(unknown_accepting)!r}")
     for t in transitions:
-        if t.source not in known or t.target not in known: raise ValueError(f"transition references unknown state: {t}")
+        if t.source not in known or t.target not in known:
+            raise ValueError(f"transition references unknown state: {t}")
     return NFA(tuple(states),initial,tuple(transitions),tuple(dict.fromkeys(accepting)))
 
 
