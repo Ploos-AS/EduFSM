@@ -1,0 +1,12 @@
+# EduFSM example: turnstile
+
+machine turnstile
+initial locked
+
+state locked
+state unlocked
+
+transition locked coin unlocked
+transition locked push locked
+transition unlocked coin unlocked
+transition unlocked push locked
