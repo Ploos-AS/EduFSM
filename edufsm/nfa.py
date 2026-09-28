@@ -39,14 +39,14 @@ def parse_nfa(text: str) -> NFA:
         line=raw.split("#",1)[0].strip()
         if not line: continue
         lower=line.lower()
-        if lower.startswith("nfa ") or lower.startswith("machine "): continue
-        if lower.startswith("state "):
+        keyword=line.split(None,1)[0].lower()\n        if keyword in ("nfa","machine"): continue
+        if keyword=="state":
             state=line.split(None,1)[1].strip()
             if state not in states: states.append(state)
             continue
-        if lower.startswith("initial "): initial=line.split(None,1)[1].strip(); continue
-        if lower.startswith("accept "): accepting.extend(line.split()[1:]); continue
-        if lower.startswith("transition "):
+        if keyword=="initial": initial=line.split(None,1)[1].strip(); continue
+        if keyword=="accept": accepting.extend(line.split()[1:]); continue
+        if keyword=="transition":
             parts=line.split()
             if len(parts)!=4: raise ValueError(f"line {number}: transition needs source event target")
             _,source,event,target=parts; transitions.append(Transition(source,event,target)); continue
