@@ -31,11 +31,15 @@ Qualification: `docs/M2-QUALIFICATION.md`
 
 Simple lexical examples continue in M6 together with parsers and lexer examples.
 
-## M3 — Moore and Mealy machines
+## M3 — Moore and Mealy machines — PASS
 
-- output semantics
-- comparative examples
-- practical controller designs
+- [x] output semantics
+- [x] comparative examples
+- [x] practical controller designs
+- [x] executable Moore and Mealy traces
+- [x] Graphviz diagrams
+
+Qualification: `docs/M3-QUALIFICATION.md`
 
 ## M4 — Sequential digital logic
 
