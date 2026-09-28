@@ -360,4 +360,40 @@ unlocked + push -> locked
             replay_trace(changed,trace)
 
 
+    def test_m8_model_based_generation_is_reproducible(self):
+        from edufsm.model_testing import generate_events, generate_trace
+        m=parse("""STATE a
+STATE b
+STATE c
+INITIAL a
+a + left -> b
+a + right -> c
+b + back -> a
+c + back -> a
+""")
+        first=generate_events(m,20,seed=42)
+        second=generate_events(m,20,seed=42)
+        self.assertEqual(first,second)
+        self.assertEqual(generate_trace(m,20,seed=42).final,generate_trace(m,20,seed=42).final)
+
+    def test_m8_model_based_generation_stops_at_dead_end(self):
+        from edufsm.model_testing import generate_events
+        m=parse("""STATE a
+STATE b
+INITIAL a
+a + go -> b
+""")
+        self.assertEqual(generate_events(m,10,seed=1),("go",))
+
+    def test_m8_generated_transition_coverage(self):
+        from edufsm.model_testing import generated_transition_coverage
+        m=parse("""STATE a
+STATE b
+INITIAL a
+a + go -> b
+b + back -> a
+""")
+        self.assertEqual(generated_transition_coverage(m,runs=1,steps=2,seed=0),(2,2,100.0))
+
+
 if __name__ == "__main__": unittest.main()
