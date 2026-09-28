@@ -48,3 +48,30 @@ export function reachableStates(machine) {
   }
   return machine.states.filter(s => seen.has(s));
 }
+
+
+export function traceObject(machine, steps) {
+  return {
+    format: "edufsm-trace-v1",
+    initial: machine.initial,
+    steps: steps.map(s => ({source:s.source,event:s.event,target:s.target}))
+  };
+}
+
+export function replayTrace(machine, trace) {
+  if (trace.format !== "edufsm-trace-v1") throw new Error("Unsupported EduFSM trace format");
+  if (trace.initial !== machine.initial) throw new Error("Trace initial state does not match machine initial state");
+  let state=machine.initial;
+  for (let i=0;i<trace.steps.length;i++) {
+    const step=trace.steps[i];
+    if(step.source!==state) throw new Error(`Trace step ${i} source mismatch`);
+    const target=nextState(machine,state,step.event);
+    if(target!==step.target) throw new Error(`Trace step ${i} target mismatch`);
+    state=target;
+  }
+  return state;
+}
+
+export function transitionTable(machine) {
+  return machine.transitions.map(t => ({source:t.source,event:t.event,target:t.target}));
+}
