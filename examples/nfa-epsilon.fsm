@@ -1,0 +1,9 @@
+# Tiny epsilon-transition example
+NFA epsilon_demo
+STATE start
+STATE branch
+STATE accept
+INITIAL start
+ACCEPT accept
+start + epsilon -> branch
+branch + 1 -> accept
