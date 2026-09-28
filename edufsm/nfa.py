@@ -40,7 +40,7 @@ def parse_nfa(text: str) -> NFA:
         if not line: continue
         lower=line.lower()
         if lower.startswith("nfa ") or lower.startswith("machine "): continue
-        if lower.startswith("state "):
+        elif lower.startswith("state "):
             state=line.split(None,1)[1].strip()
             if state not in states: states.append(state)
         elif lower.startswith("initial "): initial=line.split(None,1)[1].strip()
