@@ -7,7 +7,10 @@ name="edufsm"
 version="0.1.0.dev0"
 description="Educational finite state machine toolkit"
 requires-python=">=3.10"
-license={text="MIT"}
+license="MIT"
 
 [project.scripts]
 edufsm="edufsm.cli:main"
+
+[tool.setuptools]
+packages=["edufsm"]
