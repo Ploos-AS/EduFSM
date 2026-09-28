@@ -176,4 +176,25 @@ run + stop -> idle
         self.assertIn("typedef enum {",csrc)
         self.assertIn("case EVENT_START: *state = STATE_RUN; return true;",csrc)
 
+
+    def test_event_driven_runtime(self):
+        from edufsm.software import EventDrivenFSM
+        m=parse("""STATE idle
+STATE running
+INITIAL idle
+idle + start -> running
+running + stop -> idle
+""")
+        runtime=EventDrivenFSM(m)
+        runtime.post("start")
+        runtime.post("stop")
+        self.assertEqual(runtime.state,"idle")
+        self.assertEqual(runtime.pending,("start","stop"))
+        self.assertEqual(runtime.dispatch_all(),(
+            ("idle","start","running"),
+            ("running","stop","idle"),
+        ))
+        self.assertEqual(runtime.state,"idle")
+        self.assertEqual(runtime.pending,())
+
 if __name__ == "__main__": unittest.main()
