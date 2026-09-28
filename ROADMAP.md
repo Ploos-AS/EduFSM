@@ -70,12 +70,14 @@ Qualification: `docs/M5-QUALIFICATION.md`
 
 Qualification: `docs/M6-QUALIFICATION.md`
 
-## M7 — HDL and FPGA
+## M7 — HDL and FPGA — PASS
 
-- Verilog/SystemVerilog implementation
-- simulation/testbench
-- synthesis-oriented design
-- links to EduCPU hardware progression
+- [x] Verilog/SystemVerilog implementation
+- [x] simulation/testbench
+- [x] synthesis-oriented design
+- [x] links to EduCPU hardware progression
+
+Qualification: `docs/M7-QUALIFICATION.md`
 
 ## M8 — Analysis and testing
 
