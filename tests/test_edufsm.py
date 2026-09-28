@@ -60,4 +60,10 @@ class EduFSMTests(unittest.TestCase):
                 word="".join(symbols)
                 self.assertEqual(nfa.accepts(word), dfa.accepts(word), word)
 
+    def test_named_nfa_header_is_not_accept_directive(self):
+        from edufsm.nfa import parse_nfa
+        nfa=parse_nfa("""NFA contains01\nSTATE start\nSTATE accept\nINITIAL start\nACCEPT accept\nstart + 1 -> accept\n""")
+        self.assertEqual(nfa.accepting, ("accept",))
+        self.assertTrue(nfa.accepts("1"))
+
 if __name__ == "__main__": unittest.main()
