@@ -10,22 +10,26 @@
 - [x] Simulator architecture/contract
 - [x] Publishing targets documented
 
-## M1 — Core state-machine concepts
+## M1 — Core state-machine concepts — PASS
 
-- states, events, transitions and outputs
-- state diagrams and transition tables
-- initial/final states
-- deterministic execution
-- exercises and solutions
-- first runnable simulator
+- [x] states, events, transitions and outputs
+- [x] state diagrams and transition tables
+- [x] initial/final states
+- [x] deterministic execution
+- [x] exercises and solutions
+- [x] first runnable simulator
 
-## M2 — Automata
+## M2 — Automata — PASS
 
-- DFA
-- NFA
-- epsilon transitions
-- NFA to DFA conversion
-- recognizers and simple lexical examples
+- [x] DFA
+- [x] NFA
+- [x] epsilon transitions
+- [x] NFA to DFA conversion
+- [x] executable recognizers
+
+Qualification: `docs/M2-QUALIFICATION.md`
+
+Simple lexical examples continue in M6 together with parsers and lexer examples.
 
 ## M3 — Moore and Mealy machines
 
