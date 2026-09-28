@@ -45,3 +45,17 @@ jobs:
       - run: edufsm run examples/protocol-controller.fsm request_start data request_end response_ready sent
       - run: edufsm run examples/protocol-controller.fsm request_start malformed reset
       - run: edufsm run examples/lexer-identifier.fsm letter digit letter
+
+  hdl:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -e .
+      - run: sudo apt-get update && sudo apt-get install -y iverilog
+      - run: edufsm hdl examples/turnstile.fsm --target systemverilog --module turnstile > /tmp/turnstile.sv
+      - run: edufsm hdl examples/turnstile.fsm --target testbench --module turnstile > /tmp/turnstile_tb.sv
+      - run: iverilog -g2012 -s turnstile_tb -o /tmp/turnstile.vvp /tmp/turnstile.sv /tmp/turnstile_tb.sv
+      - run: vvp /tmp/turnstile.vvp
