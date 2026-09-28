@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Generate deterministic Graphviz sources for EduFSM book examples."""
 from pathlib import Path
+import subprocess
 from edufsm.parser import parse
 from edufsm.render import dot
 
@@ -22,8 +23,11 @@ def main() -> None:
     for name in EXAMPLES:
         source = ROOT / "examples" / f"{name}.fsm"
         machine = parse(source.read_text(encoding="utf-8"))
-        (OUT / f"{name}.dot").write_text(dot(machine), encoding="utf-8")
-        print(OUT / f"{name}.dot")
+        dot_path = OUT / f"{name}.dot"
+        dot_path.write_text(dot(machine), encoding="utf-8")
+        subprocess.run(["dot", "-Tpng", str(dot_path), "-o", str(OUT / f"{name}.png")], check=True)
+        subprocess.run(["dot", "-Tsvg", str(dot_path), "-o", str(OUT / f"{name}.svg")], check=True)
+        print(dot_path)
 
 if __name__ == "__main__":
     main()
