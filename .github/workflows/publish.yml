@@ -13,11 +13,14 @@ jobs:
       - name: Install publishing toolchain
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc texlive-xetex texlive-fonts-recommended fonts-dejavu
+          sudo apt-get install -y pandoc graphviz texlive-xetex texlive-fonts-recommended fonts-dejavu
       - name: Build all publishing formats
         run: make all
       - name: Verify outputs
         run: |
+          test -s build/diagrams/turnstile.png
+          test -s build/diagrams/turnstile.svg
+          test -s build/diagrams/dfa-ends-in-1.png
           test -s build/site/no/index.html
           test -s build/site/en/index.html
           test -s build/edufsm-no.epub
