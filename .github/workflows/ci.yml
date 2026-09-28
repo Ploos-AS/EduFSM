@@ -31,3 +31,7 @@ jobs:
       - run: edufsm mealy-run examples/mealy-turnstile.fsm coin coin push push
       - run: edufsm moore-graph examples/moore-turnstile.fsm
       - run: edufsm mealy-graph examples/mealy-turnstile.fsm
+      - run: edufsm encode examples/traffic-light.fsm --style binary
+      - run: edufsm encode examples/traffic-light.fsm --style one-hot
+      - run: edufsm truth-table examples/traffic-light.fsm --style binary
+      - run: edufsm truth-table examples/traffic-light.fsm --style one-hot
