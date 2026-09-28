@@ -1,0 +1,16 @@
+name: FPGA qualification
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  fpga:
+    uses: Ploos-AS/hardware-ci/.github/workflows/fpga.yml@v1
+    with:
+      board: upduino-v3.1
+      working_directory: fpga/m7
+      test_target: test
+      build_target: bitstream
+      bitstream_path: fpga/m7/build/turnstile.bin
