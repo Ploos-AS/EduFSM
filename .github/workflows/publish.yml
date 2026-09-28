@@ -1,0 +1,33 @@
+name: Publishing
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install publishing toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc texlive-xetex texlive-fonts-recommended fonts-dejavu
+      - name: Build all publishing formats
+        run: make all
+      - name: Verify outputs
+        run: |
+          test -s build/site/no/index.html
+          test -s build/site/en/index.html
+          test -s build/edufsm-no.epub
+          test -s build/edufsm-en.epub
+          test -s build/edufsm-no-kindle.epub
+          test -s build/edufsm-en-kindle.epub
+          test -s build/edufsm-no.pdf
+          test -s build/edufsm-en.pdf
+      - name: Upload publishing artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: edufsm-books
+          path: build/
