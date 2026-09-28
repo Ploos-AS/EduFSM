@@ -79,13 +79,15 @@ Qualification: `docs/M6-QUALIFICATION.md`
 
 Qualification: `docs/M7-QUALIFICATION.md`
 
-## M8 — Analysis and testing
+## M8 — Analysis and testing — PASS
 
-- unreachable/dead states
-- completeness and determinism checks
-- transition coverage
-- trace/replay
-- model-based tests
+- [x] unreachable/dead states
+- [x] completeness and determinism checks
+- [x] transition coverage
+- [x] trace/replay
+- [x] model-based tests
+
+Qualification: `docs/M8-QUALIFICATION.md`
 
 ## M9 — Publishing and interactive course
 
