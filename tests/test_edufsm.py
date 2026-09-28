@@ -20,4 +20,16 @@ class EduFSMTests(unittest.TestCase):
         self.assertIn('__start -> "locked"', graph)
         self.assertIn('"locked" -> "unlocked" [label="coin"]', graph)
 
+    def test_dfa_acceptance(self):
+        m=parse("""STATE ends0\nSTATE ends1\nINITIAL ends0\nACCEPT ends1\nends0 + 0 -> ends0\nends0 + 1 -> ends1\nends1 + 0 -> ends0\nends1 + 1 -> ends1\n""")
+        self.assertEqual(m.alphabet, ("0","1"))
+        self.assertFalse(m.accepts(""))
+        self.assertTrue(m.accepts("1"))
+        self.assertTrue(m.accepts("101"))
+        self.assertFalse(m.accepts("1100"))
+
+    def test_unknown_accepting_state(self):
+        with self.assertRaises(ValueError):
+            parse("STATE a\nACCEPT missing\n")
+
 if __name__ == "__main__": unittest.main()
